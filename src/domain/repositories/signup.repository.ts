@@ -1,9 +1,9 @@
 import { User  } from "../entities/User";
 import {UserModel} from "../../../mongoose/models/User";
 import { JWToken } from "../jwt/jwt";
-// import { exclude } from "../utils/excludeColumn";
+import { exclude } from "../utils/excludeColumn";
 import { SignUpRepository } from "../interfaces/repositories/signup-repository";
-import { access } from "fs";
+
 
 export class SignUpRepositoryImplementation implements SignUpRepository {
     jwToken: JWToken;
@@ -38,10 +38,4 @@ export class SignUpRepositoryImplementation implements SignUpRepository {
     }
 }
 
-function exclude(result: any, arg1: string[]) {
-    const excludedResult = { ...result._doc };
-    arg1.forEach((key) => {
-        delete excludedResult[key];
-    });
-    return excludedResult;
-}
+

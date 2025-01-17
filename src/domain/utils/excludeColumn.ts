@@ -1,9 +1,7 @@
-export function exclude<User, Key extends keyof User>(
-    user: User,
-    keys: Key[]
-  ): Omit<User, Key> {
-    for (let key of keys) {
-      delete user[key];
-    }
-    return user;
-  }
+export function exclude(result: any, arg1: string[]) {
+    const excludedResult = { ...result._doc };
+    arg1.forEach((key) => {
+        delete excludedResult[key];
+    });
+    return excludedResult;
+}

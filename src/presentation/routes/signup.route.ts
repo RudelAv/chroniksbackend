@@ -12,7 +12,7 @@ export default function SignupRouter(
 {
     const router = express.Router();
 
-    router.post('/email', validate(signupSchema), async (req: Request, res: Response, next: NextFunction) => {
+    router.post('/email', validate(signupSchema), async (req: Request, res: Response) => {
         const result = await signUpEmailUseCase.signUpEmail(req.body);
         return parseError(result, res);
     });

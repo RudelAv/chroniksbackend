@@ -9,11 +9,23 @@ export class JWToken {
         return JWT.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRES });
     }  
     
-    verifyAccessToken(token: string, JWT: any) {
-        return JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    verifyAccessToken(token: string, JWT: any): string {
+        return JWT.verify(token, process.env.ACCESS_TOKEN_SECRET, (err: any, user: any)=> {
+            if (err) {
+                return "error";
+            } else {
+                return user;
+            }
+        });
     }
 
-    verifyRefreshToken(token: string, JWT: any) {
-        return JWT.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    verifyRefreshToken(token: string, JWT: any): string {
+        return JWT.verify(token, process.env.REFRESH_TOKEN_SECRET, (err: any, user: any)=> {
+            if (err) {
+                return "error";
+            } else {
+                return user;
+            }
+        });
     }
 }
