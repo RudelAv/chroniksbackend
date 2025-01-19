@@ -17,6 +17,10 @@ export class SignUpRepositoryImplementation implements SignUpRepository {
         const bcrypt = require("bcrypt");
 
         try {
+            const userExist = await UserModel.findOne({email: user.email});
+            if(userExist){
+                return 'P2002';
+            }
             const result = await UserModel.create({
                 name: user.name,
                 email: user.email,

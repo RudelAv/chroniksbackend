@@ -1,14 +1,20 @@
 import { PORT } from './domain/config/configDev';
 import { JWToken } from './domain/jwt/jwt';
 import { BanTokensRepositoryImplementation } from './domain/repositories/banToken.repository';
+import { PostRepositoryImplementation } from './domain/repositories/post.repository';
 import { ProfileRepositoryIMplementation } from './domain/repositories/profile.repository';
 import { SignInRepositoryImplementation } from './domain/repositories/signin.repository';
 import { SignUpRepositoryImplementation } from './domain/repositories/signup.repository';
+import { CreatePost } from './domain/use-cases/post/create-post';
+import { DeletePost } from './domain/use-cases/post/delete-post';
+import { GetPost } from './domain/use-cases/post/get-post';
+import { UpdatePost } from './domain/use-cases/post/update-post';
 import { Profile } from './domain/use-cases/profile/update-profile';
 import { SignInEmail } from './domain/use-cases/signin/signinEmail';
 import { SignUpEmail } from './domain/use-cases/signup/signUpEmail';
 import { BanToken } from './domain/use-cases/token/banToken';
 import BanTokenRouter from './presentation/routes/banToken.route';
+import PostRouter from './presentation/routes/post.route';
 import ProfileRouter from './presentation/routes/profile.route';
 import SigninRouter from './presentation/routes/signin.route';
 import SignupRouter from './presentation/routes/signup.route';
@@ -44,7 +50,14 @@ require('dotenv').config();
 
     const logoutMiddleware = BanTokenRouter(
         new BanToken(new BanTokensRepositoryImplementation())
-    )
+    );
+
+    const postMiddleware = PostRouter(
+        new CreatePost(new PostRepositoryImplementation()),
+        new UpdatePost(new PostRepositoryImplementation()),
+        new DeletePost(new PostRepositoryImplementation()),
+        new GetPost(new PostRepositoryImplementation())
+    );
 
     const TokenMiddleware = TokenRouter();
 
@@ -53,6 +66,7 @@ require('dotenv').config();
     server.use('/api/v1/profile', profileMiddleware);
     server.use('/api/v1/logout', logoutMiddleware);
     server.use('/api/v1/token', TokenMiddleware);
+    server.use('/api/v1/post', postMiddleware);
 
 
     const onlineserver = server.listen(PORT, () => console.log("Api is running at http://localhost:" + PORT))

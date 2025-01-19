@@ -77,7 +77,7 @@ export async function parseError(result: Object, res: Response) {
           code: "403",
           message: "Forbidden: You cannot modify this profile.",
         });
-      case "P2013":
+    case "P2013":
         return res.status(403).json({
           code: "403",
           message: "Forbidden: You cannot get this profile.",
@@ -100,6 +100,21 @@ export async function parseError(result: Object, res: Response) {
       });
 
     case "P2005":
+      /**
+       * @swagger
+       * components:
+       *   responses:
+       *     Forbidden:
+       *       description: Forbidden
+       *       content:
+       *         application/json:
+       *           schema:
+       *             $ref: '#/components/schemas/DefaultError'
+       */
+      return res.status(403).json({
+        code: "403",
+        message: "Forbidden: You cannot update this post.",
+      });
     case "P2006":
     case "P2007":
       /**

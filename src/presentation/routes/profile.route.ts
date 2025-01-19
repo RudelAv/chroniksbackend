@@ -26,9 +26,11 @@ export default function ProfileRouter(
             await Promise.all(
                 profileImageFile.map(async (file) => {
                     try {
+                        const timestamp = Math.round(Date.now() / 1000) + 3600
                         const result = await cloudinary.uploader.upload(file.path, {
                             resource_type: 'image',
-                            folder: 'chroniks/users/avatar'
+                            folder: 'chroniks/users/avatar',
+                            timestamp: timestamp
                         });
                         fs.unlinkSync(file.path);
                         return result.secure_url;
