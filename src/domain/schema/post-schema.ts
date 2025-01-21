@@ -10,7 +10,7 @@ export const CreatePostSchema = object({
 
 export const GetPostSchema = object({
     params: object({
-        post_id: z.string().uuid(),
+        post_id: z.string(),
     })
 });
 

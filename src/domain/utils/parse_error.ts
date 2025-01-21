@@ -116,6 +116,37 @@ export async function parseError(result: Object, res: Response) {
         message: "Forbidden: You cannot update this post.",
       });
     case "P2006":
+      /**
+       * @swagger
+       * components:
+       *   responses:
+       *     AlreadyLiked:
+       *       description: Already Liked
+       *       content:
+       *         application/json:
+       *           schema:
+       *             $ref: '#/components/schemas/DefaultError'
+       */
+      return res.status(403).json({
+        code: "403",
+        message: "Forbidden: You already liked this post.",
+      });
+    case "P2008":
+      /**
+       * @swagger
+       * components:
+       *   responses:
+       *     AlreadySaved:
+       *       description: Already Saved
+       *       content:
+       *         application/json:
+       *           schema:
+       *             $ref: '#/components/schemas/DefaultError'
+       */
+      return res.status(403).json({
+        code: "403",
+        message: "Forbidden: You already saved this post.",
+      });
     case "P2007":
       /**
        * @swagger

@@ -2,9 +2,10 @@ import express from "express";
 import { Request, Response } from "express";
 import { JWToken } from "../../domain/jwt/jwt";
 import { verifyBanToken } from "../../domain/utils/verifyBanToken";
-import jwt from "jsonwebtoken";
 import { logger } from "../../domain/utils/parse_error";
 import { BanTokensModel } from "../../../mongoose/models/BanTokens";
+import { UserModel } from "../../../mongoose/models/User";
+import { exclude } from "../../domain/utils/excludeColumn";
 
 export default function TokenRouter() {
   const router = express.Router();
@@ -27,7 +28,7 @@ export default function TokenRouter() {
    *                  code:
    *                    type: string
    *                  message:
-   *                    $ref: '#/components/schemas/AuthentificateTokens'
+   *                    $ref: '#/components/schemas/AuthenticateTokens'
    *       "404":
    *         $ref: '#/components/responses/NotFound'
    *       "401":
@@ -39,6 +40,7 @@ export default function TokenRouter() {
     const jwt = require("jsonwebtoken");
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
+    console.log(token);
     if (!token) {
       return res.status(401).json({
         code: "401",
@@ -54,31 +56,27 @@ export default function TokenRouter() {
     }
 
     const verify = new JWToken().verifyRefreshToken(token, jwt);
+    console.log(verify);
     if (verify == "error") {
       return res.status(400).json({
         code: "400",
         message: "Bad Token",
       });
     } else {
-      const user_result = await BanTokensModel.findOne({
-        where: { _id: verify._id },
+      const user_result = await UserModel.findById(verify.id);
+      console.log("user_result", user_result);
+      const user_result_data = exclude(user_result, ['password', 'createdAt', 'updatedAt', 'savedPosts']);
+
+      const resultat = {
+        accessToken: new JWToken().generateAccessToken(user_result_data, jwt),
+        refreshToken: new JWToken().generateRefreshToken(user_result_data, jwt),
+      };
+      console.log("resultat", resultat);
+      return res.status(200).json({
+        code: "200",
+        message: resultat,
       });
-      if (!user_result) {
-        return res.status(404).json({
-          code: "404",
-          message: "User not found",
-        });
-      } else {
-        const resultat = {
-          accessToken: new JWToken().generateAccessToken(user_result, jwt),
-          refreshToken: new JWToken().generateRefreshToken(user_result, jwt),
-        };
-        console.log(resultat);
-        return res.status(200).json({
-          code: "200",
-          message: resultat,
-        });
-      }
+
     }
   });
 

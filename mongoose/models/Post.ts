@@ -34,6 +34,10 @@ export const PostSchema = new mongoose.Schema({
     },
   }],
   tags: [String],
+  deleted: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: true,
 });

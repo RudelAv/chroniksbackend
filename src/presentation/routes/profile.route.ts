@@ -17,6 +17,7 @@ export default function ProfileRouter(
     router.use(bodyParser.urlencoded({ extended: true }));
 
     router.put('/', upload.fields([{ name: 'avatar', maxCount: 1 }]), authenticateToken, async (req, res) => {
+        // console.log(req.body.token);
         const user_id = req.body.userConnect.id;
 
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };

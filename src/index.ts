@@ -5,9 +5,12 @@ import { PostRepositoryImplementation } from './domain/repositories/post.reposit
 import { ProfileRepositoryIMplementation } from './domain/repositories/profile.repository';
 import { SignInRepositoryImplementation } from './domain/repositories/signin.repository';
 import { SignUpRepositoryImplementation } from './domain/repositories/signup.repository';
+import { CommentPost } from './domain/use-cases/post/comment-post';
 import { CreatePost } from './domain/use-cases/post/create-post';
 import { DeletePost } from './domain/use-cases/post/delete-post';
 import { GetPost } from './domain/use-cases/post/get-post';
+import { SavePost } from './domain/use-cases/post/save-post';
+import { LikePost } from './domain/use-cases/post/like-post';
 import { UpdatePost } from './domain/use-cases/post/update-post';
 import { Profile } from './domain/use-cases/profile/update-profile';
 import { SignInEmail } from './domain/use-cases/signin/signinEmail';
@@ -56,7 +59,10 @@ require('dotenv').config();
         new CreatePost(new PostRepositoryImplementation()),
         new UpdatePost(new PostRepositoryImplementation()),
         new DeletePost(new PostRepositoryImplementation()),
-        new GetPost(new PostRepositoryImplementation())
+        new GetPost(new PostRepositoryImplementation()),
+        new LikePost(new PostRepositoryImplementation()),
+        new CommentPost(new PostRepositoryImplementation()),
+        new SavePost(new PostRepositoryImplementation())
     );
 
     const TokenMiddleware = TokenRouter();
