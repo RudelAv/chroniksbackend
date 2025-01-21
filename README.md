@@ -1,6 +1,6 @@
 # Social Network (Blog tech) API
 
-Une API REST pour le back-end d'un blog tech (chroniks) construite avec Node.js, Express et MongoDB.
+Une API REST pour le back-end d'un blog tech (DevBlog) construite avec Node.js, Express et MongoDB.
 
 ## Fonctionnalités
 
