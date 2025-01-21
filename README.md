@@ -24,12 +24,13 @@ Une API REST pour le back-end d'un blog tech (DevBlog) construite avec Node.js, 
 ## Installation
 
 1. Cloner le repository
-git clone https://github.com/RudelAv/chroniksbackend.git
+`git clone https://github.com/RudelAv/chroniksbackend.git`
 
 2. Installer les dépendances
-npm install
+`npm install`
 
 3. Configurer le fichier .env.local ou simplement .env avec les variables d'environnement suivantes:
+```
 DATABASE_URL=VOTRE_URL_DATABASE
 ACCESS_TOKEN_SECRET=VOTRE_SECRET_ACCESS_TOKEN
 REFRESH_TOKEN_SECRET=VOTRE_SECRET_REFRESH_TOKEN
@@ -40,9 +41,11 @@ CLOUDINARY_API_KEY=VOTRE_CLOUDINARY_API_KEY
 CLOUDINARY_API_SECRET=VOTRE_CLOUDINARY_API_SECRET
 PORT=VOTRE_PORT
 
+```
+
 
 4. Lancer le serveur
-npm start
+`npm start`
 
 ## Utilisation
 
