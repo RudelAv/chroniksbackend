@@ -11,6 +11,16 @@ Une API REST pour le back-end d'un blog tech (chroniks) construite avec Node.js,
 - Sauvegarde de posts
 - Gestion des tokens (rafraîchissement/révocation)
 
+## Technologies utilisées
+
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- JWT
+- Cloudinary
+- Multer
+
 ## Installation
 
 1. Cloner le repository
