@@ -1,7 +1,7 @@
 import { ProfileRepository } from "../../interfaces/repositories/profile-repository";
-import { getProfileUseCase } from "../../interfaces/uses-cases/profile/get-profile";
+import { GetProfileUseCase } from "../../interfaces/uses-cases/profile/get-profile";
 
-export class Profile implements getProfileUseCase {
+export class GetProfile implements GetProfileUseCase {
     private profileRepository: ProfileRepository;
 
     constructor(profileRepository: ProfileRepository) {

@@ -40,7 +40,6 @@ export default function TokenRouter() {
     const jwt = require("jsonwebtoken");
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
-    console.log(token);
     if (!token) {
       return res.status(401).json({
         code: "401",
@@ -65,11 +64,18 @@ export default function TokenRouter() {
     } else {
       const user_result = await UserModel.findById(verify.id);
       console.log("user_result", user_result);
-      const user_result_data = exclude(user_result, ['password', 'createdAt', 'updatedAt', 'savedPosts']);
+      let data = {
+        id: user_result?._id,
+        name: user_result?.name,
+        email: user_result?.email,
+        provider: user_result?.provider,
+        image: user_result?.image,
+        bio: user_result?.bio,
+      };
 
       const resultat = {
-        accessToken: new JWToken().generateAccessToken(user_result_data, jwt),
-        refreshToken: new JWToken().generateRefreshToken(user_result_data, jwt),
+        accessToken: new JWToken().generateAccessToken(data, jwt),
+        refreshToken: new JWToken().generateRefreshToken(data, jwt),
       };
       console.log("resultat", resultat);
       return res.status(200).json({

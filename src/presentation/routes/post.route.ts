@@ -11,6 +11,10 @@ import { LikePostUseCase } from '../../domain/interfaces/uses-cases/post/like-po
 import { SavePostUseCase } from '../../domain/interfaces/uses-cases/post/save-post';
 import { CommentPostUseCase } from '../../domain/interfaces/uses-cases/post/comment-post';
 import { Request, Response } from "express";
+import multer from 'multer';
+import cloudinary from "../../../cloudinary.config";
+import fs from 'fs';
+import { GetPostAuthorUseCase } from '../../domain/interfaces/uses-cases/post/get-post-author';
 
 
 
@@ -21,20 +25,44 @@ export default function PostRouter(
     getPostUseCase: GetPostUseCase,
     likePostUseCase: LikePostUseCase,
     commentPostUseCase: CommentPostUseCase,
-    savePostUseCase: SavePostUseCase
+    savePostUseCase: SavePostUseCase,
+    getPostAuthorUseCase: GetPostAuthorUseCase
 ) {
     const router = express.Router();
+    const upload = multer({ dest: 'uploads/' });
 
-    router.post('/', authenticateToken, validate(CreatePostSchema),async (req, res) => {
+    router.post('/', upload.fields([{ name: 'imagePreview', maxCount: 1 }]), authenticateToken, validate(CreatePostSchema), async (req, res) => {
         const user_id = req.body.userConnect.id;
+        
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const imagePreviewFile = files?.imagePreview || [];
+        
+        let imageUrl = null;
+        if (imagePreviewFile.length > 0) {
+            try {
+                const timestamp = Math.round(Date.now() / 1000) + 3600;
+                const result = await cloudinary.uploader.upload(imagePreviewFile[0].path, {
+                    resource_type: 'image',
+                    folder: 'chroniks/posts/previews',
+                    timestamp: timestamp
+                });
+                fs.unlinkSync(imagePreviewFile[0].path);
+                imageUrl = result.secure_url;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         const post = {
             title: req.body.title,
             content: req.body.content,
             author: user_id,
             likes: [],
             comments: [],
-            tags: req.body.tags
+            tags: req.body.tags,
+            imagePreview: imageUrl
         };
+        
         const result = await createPostUseCase.createPost(post as any);
         return parseError(result, res);
     });
@@ -92,6 +120,12 @@ export default function PostRouter(
         const post_id = req.params.id;
         const user_id = req.body.userConnect.id;
         const result = await savePostUseCase.savePost(post_id, user_id);
+        return parseError(result, res);
+    });
+
+    router.get('/:id/author', authenticateToken, async (req: Request, res: Response) => {
+        const post_id = req.params.id;
+        const result = await getPostAuthorUseCase.getPostAuthor(post_id);
         return parseError(result, res);
     });
 

@@ -34,7 +34,6 @@ export async function authenticateToken(
   const authHeader = req.headers["authorization"];
   const jwt = require("jsonwebtoken");
   const token = authHeader && authHeader.split(" ")[1];
-
   if (!token) {
     return res.status(401).json({
       code: "401",

@@ -23,6 +23,8 @@ import SigninRouter from './presentation/routes/signin.route';
 import SignupRouter from './presentation/routes/signup.route';
 import TokenRouter from './presentation/routes/token.route';
 import server from './server';
+import { GetProfile } from './domain/use-cases/profile/get-profile';
+import { GetPostAuthor } from './domain/use-cases/post/get-post-author';
 
 require('dotenv').config();
 
@@ -48,7 +50,8 @@ require('dotenv').config();
     );
 
     const profileMiddleware = ProfileRouter(
-        new Profile(new ProfileRepositoryIMplementation())
+        new Profile(new ProfileRepositoryIMplementation()),
+        new GetProfile(new ProfileRepositoryIMplementation())
     );
 
     const logoutMiddleware = BanTokenRouter(
@@ -62,7 +65,8 @@ require('dotenv').config();
         new GetPost(new PostRepositoryImplementation()),
         new LikePost(new PostRepositoryImplementation()),
         new CommentPost(new PostRepositoryImplementation()),
-        new SavePost(new PostRepositoryImplementation())
+        new SavePost(new PostRepositoryImplementation()),
+        new GetPostAuthor(new PostRepositoryImplementation())
     );
 
     const TokenMiddleware = TokenRouter();

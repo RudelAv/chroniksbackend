@@ -10,4 +10,5 @@ export interface PostRepository{
     likePost(post_id: string, user_id: string): any;
     savePost(post_id: string, user_id: string): any;
     commentPost(post_id: string, comment: Comments): any;
+    getPostAuthor(postId: string): any;
 }

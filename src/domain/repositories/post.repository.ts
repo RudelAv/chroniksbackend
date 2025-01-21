@@ -6,6 +6,16 @@ import { UserModel } from "../../../mongoose/models/User";
 import { Comments } from "../entities/Comment";
 
 export class PostRepositoryImplementation implements PostRepository {
+    async getPostAuthor(postId: string) {
+        try {
+            const post = await PostModel.findById(postId);
+            if (!post) return null;
+            const author = await UserModel.findById(post.author);
+            return author;
+        } catch (error: any) {
+            return error.code;
+        }
+    }
     async getAllPosts() {
         try {
             return await PostModel.find();
@@ -96,6 +106,7 @@ export class PostRepositoryImplementation implements PostRepository {
             return await PostModel.create({
                 title: post.title,
                 content: post.content,
+                imagePreview: post.imagePreview,
                 author: post.author,
                 likes: [],
                 comments: [],

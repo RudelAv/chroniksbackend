@@ -5,10 +5,12 @@ import cloudinary from "../../../cloudinary.config"
 import { parseError } from "../../domain/utils/parse_error";
 import { EditProfileUseCase } from '../../domain/interfaces/uses-cases/profile/edit-profile';
 import fs from 'fs'
+import { GetProfileUseCase } from '../../domain/interfaces/uses-cases/profile/get-profile';
 
 const bodyParser = require('body-parser');
 export default function ProfileRouter(
-    profileUseCase: EditProfileUseCase
+    profileUseCase: EditProfileUseCase,
+    getProfileUseCase: GetProfileUseCase
 ) {
     const router = express.Router();
     const upload = multer({ dest: 'uploads/' });
@@ -47,6 +49,14 @@ export default function ProfileRouter(
             bio: req.body.bio,
         };
         const result = await profileUseCase.updateProfile(user as any, imageUrl as any)
+        return parseError(result, res)
+    })
+
+
+    router.get('/', authenticateToken, async (req, res) => {
+        console.log(req.body.token)
+        const user_id = req.body.userConnect.id;
+        const result = await getProfileUseCase.getProfile(user_id);
         return parseError(result, res)
     })
 

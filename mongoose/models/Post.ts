@@ -9,6 +9,10 @@ export const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  imagePreview: {
+    type: String,
+    required: false,
+  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
