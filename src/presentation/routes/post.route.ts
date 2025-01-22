@@ -15,6 +15,8 @@ import multer from 'multer';
 import cloudinary from "../../../cloudinary.config";
 import fs from 'fs';
 import { GetPostAuthorUseCase } from '../../domain/interfaces/uses-cases/post/get-post-author';
+import { DislikePostUseCase } from '../../domain/interfaces/uses-cases/post/dislike-post';
+import { SearchPostsUseCase } from '../../domain/interfaces/uses-cases/post/search-posts';
 
 
 
@@ -26,10 +28,20 @@ export default function PostRouter(
     likePostUseCase: LikePostUseCase,
     commentPostUseCase: CommentPostUseCase,
     savePostUseCase: SavePostUseCase,
-    getPostAuthorUseCase: GetPostAuthorUseCase
+    getPostAuthorUseCase: GetPostAuthorUseCase,
+    dislikePostUseCase: DislikePostUseCase,
+    searchPostsUseCase: SearchPostsUseCase
 ) {
     const router = express.Router();
     const upload = multer({ dest: 'uploads/' });
+
+    router.get('/search', authenticateToken, async (req: Request, res: Response) => {
+        const query = req.query.q as string || '';
+        const tags = req.query.tags ? (req.query.tags as string).split(',') : undefined;
+        
+        const result = await searchPostsUseCase.searchPosts(query, tags);
+        return parseError(result, res);
+    });
 
     router.post('/', upload.fields([{ name: 'imagePreview', maxCount: 1 }]), authenticateToken, validate(CreatePostSchema), async (req, res) => {
         const user_id = req.body.userConnect.id;
@@ -129,7 +141,12 @@ export default function PostRouter(
         return parseError(result, res);
     });
 
-    
+    router.delete('/:id/dislike', authenticateToken, async (req: Request, res: Response) => {
+        const post_id = req.params.id;
+        const user_id = req.body.userConnect.id;
+        const result = await dislikePostUseCase.dislikePost(post_id, user_id);
+        return parseError(result, res);
+    });
 
     return router;
 }   

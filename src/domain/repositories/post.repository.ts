@@ -6,12 +6,28 @@ import { UserModel } from "../../../mongoose/models/User";
 import { Comments } from "../entities/Comment";
 
 export class PostRepositoryImplementation implements PostRepository {
+    async dislikePost(post_id: string, user_id: string) {
+        try {
+            const post = await PostModel.findById(post_id);
+            if (!post) {
+                return 'P2005';
+            }
+            
+            // if (!post.likes.some(id => id.toString() === user_id)) {
+            //     return 'P2006';
+            // }
+
+            post.likes = post.likes.filter(id => id.toString() !== user_id);
+            return await post.save();
+        } catch (error: any) {
+            return error.code;
+        }
+    }
     async getPostAuthor(postId: string) {
         try {
             const post = await PostModel.findById(postId);
             if (!post) return null;
-            const author = await UserModel.findById(post.author);
-            return author;
+            return await UserModel.findById(post.author);
         } catch (error: any) {
             return error.code;
         }
@@ -129,6 +145,27 @@ export class PostRepositoryImplementation implements PostRepository {
                 deleted: true
             });
         } catch (error:any) {
+            return error.code;
+        }
+    }
+    async searchPosts(query: string, tags?: string[]) {
+        console.log(query, tags);
+        try {
+            const searchCriteria: any = {
+                $or: [
+                    { title: { $regex: query, $options: 'i' } },
+                    { content: { $regex: query, $options: 'i' } }
+                ]
+            };
+
+            if (tags && tags.length > 0) {
+                searchCriteria.tags = { $all: tags };
+            }
+
+            return await PostModel.find(searchCriteria)
+                            .populate('author', 'name avatar')
+                            .sort({ createdAt: -1 });
+        } catch (error: any) {
             return error.code;
         }
     }

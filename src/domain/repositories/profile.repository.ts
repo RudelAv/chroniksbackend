@@ -3,6 +3,13 @@ import { UserModel } from "../../../mongoose/models/User";
 import { ProfileRepository } from "../interfaces/repositories/profile-repository";
 
 export class ProfileRepositoryIMplementation implements ProfileRepository {
+    async getUserInfo(user_id: string) {
+        try {
+            return await UserModel.findById(user_id);
+        } catch (error:any) {
+            return error.code;
+        }
+    }
     async editProfile(user: User, imageUrl: String) {
         try {
             if (imageUrl) {

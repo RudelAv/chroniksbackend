@@ -6,11 +6,13 @@ import { parseError } from "../../domain/utils/parse_error";
 import { EditProfileUseCase } from '../../domain/interfaces/uses-cases/profile/edit-profile';
 import fs from 'fs'
 import { GetProfileUseCase } from '../../domain/interfaces/uses-cases/profile/get-profile';
+import { GetUserInfoUseCase } from '../../domain/interfaces/uses-cases/profile/get-user-info';
 
 const bodyParser = require('body-parser');
 export default function ProfileRouter(
     profileUseCase: EditProfileUseCase,
-    getProfileUseCase: GetProfileUseCase
+    getProfileUseCase: GetProfileUseCase,
+    getUserInfoUseCase: GetUserInfoUseCase
 ) {
     const router = express.Router();
     const upload = multer({ dest: 'uploads/' });
@@ -54,9 +56,14 @@ export default function ProfileRouter(
 
 
     router.get('/', authenticateToken, async (req, res) => {
-        console.log(req.body.token)
         const user_id = req.body.userConnect.id;
         const result = await getProfileUseCase.getProfile(user_id);
+        return parseError(result, res)
+    })
+
+    router.get('/:user_id', authenticateToken, async (req, res) => {
+        const {user_id} = req.params;
+        const result = await getUserInfoUseCase.getUserInfo(user_id);
         return parseError(result, res)
     })
 

@@ -25,6 +25,9 @@ import TokenRouter from './presentation/routes/token.route';
 import server from './server';
 import { GetProfile } from './domain/use-cases/profile/get-profile';
 import { GetPostAuthor } from './domain/use-cases/post/get-post-author';
+import { GetUserInfo } from './domain/use-cases/profile/get-user-info';
+import { DislikePost } from './domain/use-cases/post/dislike-post';
+import { SearchPosts } from './domain/use-cases/post/search-posts';
 
 require('dotenv').config();
 
@@ -51,7 +54,8 @@ require('dotenv').config();
 
     const profileMiddleware = ProfileRouter(
         new Profile(new ProfileRepositoryIMplementation()),
-        new GetProfile(new ProfileRepositoryIMplementation())
+        new GetProfile(new ProfileRepositoryIMplementation()),
+        new GetUserInfo(new ProfileRepositoryIMplementation())
     );
 
     const logoutMiddleware = BanTokenRouter(
@@ -66,7 +70,9 @@ require('dotenv').config();
         new LikePost(new PostRepositoryImplementation()),
         new CommentPost(new PostRepositoryImplementation()),
         new SavePost(new PostRepositoryImplementation()),
-        new GetPostAuthor(new PostRepositoryImplementation())
+        new GetPostAuthor(new PostRepositoryImplementation()),
+        new DislikePost(new PostRepositoryImplementation()),
+        new SearchPosts(new PostRepositoryImplementation())
     );
 
     const TokenMiddleware = TokenRouter();
