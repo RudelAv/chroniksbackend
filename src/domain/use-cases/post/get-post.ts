@@ -10,7 +10,7 @@ export class GetPost implements GetPostUseCase {
     async getAllPosts() {
         return await this.postRepository.getAllPosts();
     }
-    async getPost(post_id: string) {
-        return await this.postRepository.getPost(post_id);
+    async getPost(post_id: string, user_id: string) {
+        return await this.postRepository.getPost(post_id, user_id);
     }
 }

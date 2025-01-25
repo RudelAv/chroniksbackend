@@ -4,18 +4,36 @@ import { PostRepository } from "../interfaces/repositories/post-repository";
 import { Types } from "mongoose";
 import { UserModel } from "../../../mongoose/models/User";
 import { Comments } from "../entities/Comment";
+import { UserHistoryModel } from "../../../mongoose/models/UserHistory";
 
 export class PostRepositoryImplementation implements PostRepository {
+    async getUserHistory(user_id: string) {
+        try {
+            return await UserHistoryModel.find({ user: user_id });
+        } catch (error: any) {
+            return error.code;
+        }
+    }
+    async getAllPostsByUser(user_id: string) {
+        try {
+            return await PostModel.find({ author: user_id });
+        } catch (error: any) {
+            return error.code;
+        }
+    }
+    async getBestPosts() {
+        try {
+            return await PostModel.find().sort({ likes: -1 }).limit(10);
+        } catch (error: any) {
+            return error.code;
+        }
+    }
     async dislikePost(post_id: string, user_id: string) {
         try {
             const post = await PostModel.findById(post_id);
             if (!post) {
                 return 'P2005';
             }
-            
-            // if (!post.likes.some(id => id.toString() === user_id)) {
-            //     return 'P2006';
-            // }
 
             post.likes = post.likes.filter(id => id.toString() !== user_id);
             return await post.save();
@@ -132,9 +150,24 @@ export class PostRepositoryImplementation implements PostRepository {
             return error.code;
         }
     }
-    async getPost(post_id: string) {
+    async getPost(post_id: string, user_id: string) {
         try {
-            return await PostModel.findById(post_id);
+            const post = await PostModel.findById(post_id);
+            if (!post) {
+                return 'P2005';
+            }
+
+            const user = await UserModel.findById(user_id);
+            if (!user) {
+                return 'P2005';
+            }
+
+            await UserHistoryModel.create({
+                user: user_id,
+                viewedPosts: [post_id]
+            });
+
+            return post;
         } catch (error:any) {
             return error.code;
         }
@@ -148,7 +181,7 @@ export class PostRepositoryImplementation implements PostRepository {
             return error.code;
         }
     }
-    async searchPosts(query: string, tags?: string[]) {
+    async searchPosts(query: string, tags?: string[], user_id?: string) {
         console.log(query, tags);
         try {
             const searchCriteria: any = {
@@ -160,6 +193,15 @@ export class PostRepositoryImplementation implements PostRepository {
 
             if (tags && tags.length > 0) {
                 searchCriteria.tags = { $all: tags };
+            }
+
+            try {
+                await UserHistoryModel.create({
+                    user: user_id,
+                    searchHistory: [query]
+                });
+            } catch (error) {
+                console.log(error);
             }
 
             return await PostModel.find(searchCriteria)

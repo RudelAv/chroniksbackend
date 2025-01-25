@@ -28,6 +28,11 @@ import { GetPostAuthor } from './domain/use-cases/post/get-post-author';
 import { GetUserInfo } from './domain/use-cases/profile/get-user-info';
 import { DislikePost } from './domain/use-cases/post/dislike-post';
 import { SearchPosts } from './domain/use-cases/post/search-posts';
+import { GetBestPosts } from './domain/use-cases/post/get-best-post';
+import { GetPostByUser } from './domain/use-cases/post/get-post-by-user';
+import HistoryRouter from './presentation/routes/history.route';
+import { GetUserHistory } from './domain/use-cases/history/get-viewed-post';
+import { HistoryRepositoryImplementation } from './domain/repositories/history.repository';
 
 require('dotenv').config();
 
@@ -72,9 +77,14 @@ require('dotenv').config();
         new SavePost(new PostRepositoryImplementation()),
         new GetPostAuthor(new PostRepositoryImplementation()),
         new DislikePost(new PostRepositoryImplementation()),
-        new SearchPosts(new PostRepositoryImplementation())
+        new SearchPosts(new PostRepositoryImplementation()),
+        new GetBestPosts(new PostRepositoryImplementation()),
+        new GetPostByUser(new PostRepositoryImplementation())
     );
 
+    const historyMiddleware = HistoryRouter(
+       new GetUserHistory(new HistoryRepositoryImplementation())
+    );
     const TokenMiddleware = TokenRouter();
 
     server.use('/api/v1/signup', signUpMiddleware);
@@ -83,6 +93,7 @@ require('dotenv').config();
     server.use('/api/v1/logout', logoutMiddleware);
     server.use('/api/v1/token', TokenMiddleware);
     server.use('/api/v1/post', postMiddleware);
+    server.use('/api/v1/history', historyMiddleware);
 
 
     const onlineserver = server.listen(PORT, () => console.log("Api is running at http://localhost:" + PORT))

@@ -8,7 +8,7 @@ export class SearchPosts implements SearchPostsUseCase {
         this.postRepository = postRepository;
     }
 
-    async searchPosts(query: string, tags?: string[]) {
-        return await this.postRepository.searchPosts(query, tags);
+    async searchPosts(query: string, tags?: string[], user_id?: string) {
+        return await this.postRepository.searchPosts(query, tags, user_id);
     }
 } 

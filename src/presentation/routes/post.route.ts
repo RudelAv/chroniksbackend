@@ -17,6 +17,8 @@ import fs from 'fs';
 import { GetPostAuthorUseCase } from '../../domain/interfaces/uses-cases/post/get-post-author';
 import { DislikePostUseCase } from '../../domain/interfaces/uses-cases/post/dislike-post';
 import { SearchPostsUseCase } from '../../domain/interfaces/uses-cases/post/search-posts';
+import { GetBestPostUseCase } from '../../domain/interfaces/uses-cases/post/get-best-post';
+import { GetAllPostByUserUseCase } from '../../domain/interfaces/uses-cases/post/get-all-post-by-user';
 
 
 
@@ -30,16 +32,25 @@ export default function PostRouter(
     savePostUseCase: SavePostUseCase,
     getPostAuthorUseCase: GetPostAuthorUseCase,
     dislikePostUseCase: DislikePostUseCase,
-    searchPostsUseCase: SearchPostsUseCase
+    searchPostsUseCase: SearchPostsUseCase,
+    getBestPostsUseCase: GetBestPostUseCase,
+    getPostByUserUseCase: GetAllPostByUserUseCase
 ) {
     const router = express.Router();
     const upload = multer({ dest: 'uploads/' });
 
+
     router.get('/search', authenticateToken, async (req: Request, res: Response) => {
         const query = req.query.q as string || '';
         const tags = req.query.tags ? (req.query.tags as string).split(',') : undefined;
+        const user_id = req.body.userConnect.id;
         
-        const result = await searchPostsUseCase.searchPosts(query, tags);
+        const result = await searchPostsUseCase.searchPosts(query, tags, user_id);
+        return parseError(result, res);
+    });
+
+    router.get('/best', async (req: Request, res: Response) => {
+        const result = await getBestPostsUseCase.getBestPosts();
         return parseError(result, res);
     });
 
@@ -79,6 +90,12 @@ export default function PostRouter(
         return parseError(result, res);
     });
 
+    router.get('/user/:id', authenticateToken, async (req: Request, res: Response) => {
+        const user_id = req.params.id;
+        const result = await getPostByUserUseCase.getAllPostByUser(user_id);
+        return parseError(result, res);
+    });
+
     router.put('/:id', authenticateToken, validate(UpdatePostSchema), async (req, res) => {
         const post_id = req.params.id;
         const user_id = req.body.userConnect.id;
@@ -100,7 +117,8 @@ export default function PostRouter(
 
     router.get('/:id', authenticateToken, async (req, res) => {
         const post_id = req.params.id;
-        const result = await getPostUseCase.getPost(post_id);
+        const user_id = req.body.userConnect.id;
+        const result = await getPostUseCase.getPost(post_id, user_id);
         return parseError(result, res);
     });
 
