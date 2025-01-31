@@ -33,6 +33,9 @@ import { GetPostByUser } from './domain/use-cases/post/get-post-by-user';
 import HistoryRouter from './presentation/routes/history.route';
 import { GetUserHistory } from './domain/use-cases/history/get-viewed-post';
 import { HistoryRepositoryImplementation } from './domain/repositories/history.repository';
+import { CommunityRepositoryImplementation } from './domain/repositories/community.repository';
+import CommunityRouter from './presentation/routes/community.route';
+import { CreateCommunityUseCaseImplementation } from './domain/use-cases/community/create-community';
 
 require('dotenv').config();
 
@@ -85,6 +88,11 @@ require('dotenv').config();
     const historyMiddleware = HistoryRouter(
        new GetUserHistory(new HistoryRepositoryImplementation())
     );
+
+    const communityMiddleware = CommunityRouter(
+        new CreateCommunityUseCaseImplementation(new CommunityRepositoryImplementation())
+    );
+
     const TokenMiddleware = TokenRouter();
 
     server.use('/api/v1/signup', signUpMiddleware);
@@ -94,6 +102,7 @@ require('dotenv').config();
     server.use('/api/v1/token', TokenMiddleware);
     server.use('/api/v1/post', postMiddleware);
     server.use('/api/v1/history', historyMiddleware);
+    server.use('/api/v1/community', communityMiddleware);
 
 
     const onlineserver = server.listen(PORT, () => console.log("Api is running at http://localhost:" + PORT))
