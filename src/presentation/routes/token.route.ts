@@ -10,32 +10,6 @@ import { exclude } from "../../domain/utils/excludeColumn";
 export default function TokenRouter() {
   const router = express.Router();
 
-  /**
-   * @swagger
-   * /api/v1/token/refresh:
-   *   post:
-   *     tags: ["Token"]
-   *     summary: Get a set usernames
-   *     description: "Generate & Recommend usernames for user based on his name"
-   *     responses:
-   *       "200":
-   *          description: OK
-   *          content:
-   *            application/json:
-   *              schema:
-   *                type: object
-   *                properties:
-   *                  code:
-   *                    type: string
-   *                  message:
-   *                    $ref: '#/components/schemas/AuthenticateTokens'
-   *       "404":
-   *         $ref: '#/components/responses/NotFound'
-   *       "401":
-   *         $ref: '#/components/responses/Unauthorized'
-   *       "400":
-   *         $ref: '#/components/responses/UserLogout'
-   */
   router.post("/refresh", logger, async (req: Request, res: Response) => {
     const jwt = require("jsonwebtoken");
     const authHeader = req.headers["authorization"];
