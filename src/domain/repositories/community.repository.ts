@@ -15,7 +15,15 @@ export class CommunityRepositoryImplementation implements CommunityRepository {
                 }
             );
         } catch (error: any) {
-            return error.code;
+            return error.message;
         }
+    }
+
+    async joinCommunity(community: string, user: String) {
+        return await CommunityModel.findByIdAndUpdate(community, { $addToSet: { members: user } });
+    }
+
+    async leaveCommunity(community: string, user: String) {
+        return await CommunityModel.findByIdAndUpdate(community, { $pull: { members: user } });
     }
 }

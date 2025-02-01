@@ -82,6 +82,11 @@ export async function parseError(result: Object, res: Response) {
           code: "403",
           message: "Forbidden: You cannot get this profile.",
         });
+    case "11000":
+        return res.status(409).json({
+          code: "409",
+          message: "Duplicate key value",
+        });
     case "P2004":
       /**
        * @swagger

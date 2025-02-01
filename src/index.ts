@@ -36,6 +36,8 @@ import { HistoryRepositoryImplementation } from './domain/repositories/history.r
 import { CommunityRepositoryImplementation } from './domain/repositories/community.repository';
 import CommunityRouter from './presentation/routes/community.route';
 import { CreateCommunityUseCaseImplementation } from './domain/use-cases/community/create-community';
+import { JoinCommunityUseCaseImplementation } from './domain/use-cases/community/join-community';
+import { LeaveCommunityUseCaseImplementation } from './domain/use-cases/community/leave-community';
 
 require('dotenv').config();
 
@@ -90,7 +92,9 @@ require('dotenv').config();
     );
 
     const communityMiddleware = CommunityRouter(
-        new CreateCommunityUseCaseImplementation(new CommunityRepositoryImplementation())
+        new CreateCommunityUseCaseImplementation(new CommunityRepositoryImplementation()),
+        new JoinCommunityUseCaseImplementation(new CommunityRepositoryImplementation()),
+        new LeaveCommunityUseCaseImplementation(new CommunityRepositoryImplementation())
     );
 
     const TokenMiddleware = TokenRouter();

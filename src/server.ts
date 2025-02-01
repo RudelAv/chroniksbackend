@@ -1,6 +1,8 @@
 import express from "express";
 import path from "path";
+import { swaggerSpec } from "./swagger";
 const server = express();
+const swaggerUi = require('swagger-ui-express');
 
 server.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -26,5 +28,7 @@ server.use(express.static(path.join(__dirname, "public")));
 server.use(express.json());
 
 server.use(express.urlencoded({ extended: true }));
+
+server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 export default server;

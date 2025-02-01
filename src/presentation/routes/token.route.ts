@@ -10,9 +10,32 @@ import { exclude } from "../../domain/utils/excludeColumn";
 export default function TokenRouter() {
   const router = express.Router();
 
+  /**
+   * @swagger
+   * /api/v1/token/refresh:
+   *   post:
+   *     summary: Refresh token
+   *     description: Refresh token 
+   *     tags: ["Token"]
+   *     headers:
+   *       - Authorization:
+   *         type: string
+   *         description: The token to refresh
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Token refreshed successfully 
+   *       401:
+
+   *         description: Unauthorized
+   *       500:
+   *         description: Internal server error
+   */
   router.post("/refresh", logger, async (req: Request, res: Response) => {
     const jwt = require("jsonwebtoken");
     const authHeader = req.headers["authorization"];
+
     const token = authHeader && authHeader.split(" ")[1];
     if (!token) {
       return res.status(401).json({

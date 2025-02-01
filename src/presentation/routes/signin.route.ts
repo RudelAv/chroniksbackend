@@ -12,6 +12,23 @@ export default function SigninRouter(
 {
     const router = express.Router();
 
+    /**
+     * @swagger
+     * /api/v1/signin/email:
+     *   post:
+     *     summary: Sign in with email
+     *     description: Sign in with email
+     *     tags: ["Signin"]
+     *     requestBody:
+     *       $ref: '#/components/requestBodies/SigninSchema'
+     *     responses:
+     *       200:
+     *         description: Sign in successful
+     *       401:
+     *         description: Unauthorized
+     *       500:
+     *         description: Internal server error
+     */
     router.post('/email', validate(signinSchema), async (req: Request, res: Response) => {
         const result = await signInEmailUseCase.signInEmail(req.body);
         return parseError(result, res);
