@@ -32,6 +32,7 @@ export interface Community {
   _id: string;
   name: string;
   description: string;
+  category: string;
   image: string;
   creator: string | User;
   members: (string | User)[];

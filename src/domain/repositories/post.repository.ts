@@ -16,14 +16,26 @@ export class PostRepositoryImplementation implements PostRepository {
     }
     async getAllPostsByUser(user_id: string) {
         try {
-            return await PostModel.find({ author: user_id });
+            return await PostModel.find(
+                {
+                    author: user_id,
+                    deleted: false
+                }
+            ).populate('author', 'name image');
         } catch (error: any) {
             return error.code;
         }
+
     }
     async getBestPosts() {
         try {
-            return await PostModel.find().sort({ likes: -1 }).limit(10);
+            return await PostModel.find(
+                {
+                    deleted: false
+                }
+            ).populate('author', 'name image').sort({ likes: -1 }).limit(10);
+
+
         } catch (error: any) {
             return error.code;
         }
@@ -52,7 +64,11 @@ export class PostRepositoryImplementation implements PostRepository {
     }
     async getAllPosts() {
         try {
-            return await PostModel.find();
+            return await PostModel.find(
+                {
+                    deleted: false
+                }
+            ).populate('author', 'name image');
         } catch (error: any) {
             return error.code
         }
@@ -205,8 +221,9 @@ export class PostRepositoryImplementation implements PostRepository {
             }
 
             return await PostModel.find(searchCriteria)
-                            .populate('author', 'name avatar')
+                            .populate('author', 'name image')
                             .sort({ createdAt: -1 });
+
         } catch (error: any) {
             return error.code;
         }

@@ -85,7 +85,7 @@ export async function parseError(result: Object, res: Response) {
     case "11000":
         return res.status(409).json({
           code: "409",
-          message: "Duplicate key value",
+          message: "This community already exists.",
         });
     case "P2004":
       /**

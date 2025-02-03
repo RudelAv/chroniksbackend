@@ -68,3 +68,23 @@ export const LeaveCommunitySchema = object({
     })
 });
 
+/**
+ * @openapi
+ * components:
+ *   requestBodies:
+ *     GetCommunitySchema:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               community_id:
+ *                 type: string
+ */
+export const GetCommunitySchema = object({
+    params: object({
+        community: z.string().min(3).max(255)
+    })
+});
+

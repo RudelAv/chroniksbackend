@@ -167,6 +167,11 @@ export default function PostRouter(
      *     description: Get posts by user
      *     tags: ["Posts"]
      *     parameters:
+     *       - name: id
+     *         in: path
+     *         description: The id of the user
+     *         required: true
+     *         type: string
      *     security:
      *       - bearerAuth: []
      *     responses:

@@ -10,6 +10,10 @@ const CommunitySchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    category: {
+        type: String,
+        default: '',
+    },
     image: {
         type: String,
         default: '',
@@ -110,6 +114,10 @@ const CommunitySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post',
     }],
+    deleted: {
+        type: Boolean,
+        default: false,
+    },
 }, {
     timestamps: true,
 });
