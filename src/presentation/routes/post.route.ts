@@ -100,6 +100,33 @@ export default function PostRouter(
 
     /**
      * @swagger
+     * /api/v1/post/saved:
+     *   get:
+     *     summary: Get saved posts
+     *     description: Get saved posts
+     *     tags: ["Posts"]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Saved posts retrieved successfully
+     *       401:
+     *         description: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *       400:
+     *         description: Bad request
+     */
+    router.get('/saved', authenticateToken, async (req: Request, res: Response) => {
+        const user_id = req.body.userConnect.id;
+        console.log(user_id);
+        const result = await savePostUseCase.getSavedPosts(user_id);
+        return parseError(result, res);
+    })
+
+
+    /**
+     * @swagger
      * /api/v1/post/search:
      *   get:
      *     summary: Search posts
@@ -485,7 +512,6 @@ export default function PostRouter(
         const result = await dislikePostUseCase.dislikePost(post_id, user_id);
         return parseError(result, res);
     });
-
 
     return router;
 }   

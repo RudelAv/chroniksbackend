@@ -16,4 +16,6 @@ export interface PostRepository{
     getBestPosts(): any;
     getAllPostsByUser(user_id: string): any;
     getUserHistory(user_id: string): any;
+    getSavedPosts(user_id: string): any;
+    unsavePost(post_id: string, user_id: string): any;
 }

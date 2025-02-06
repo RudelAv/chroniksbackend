@@ -7,6 +7,32 @@ import { Comments } from "../entities/Comment";
 import { UserHistoryModel } from "../../../mongoose/models/UserHistory";
 
 export class PostRepositoryImplementation implements PostRepository {
+    async getSavedPosts(user_id: string) {
+        try {
+            return await UserModel.findById(user_id)
+                .populate({
+                    path: 'savedPosts',
+                    model: 'Post',
+                    populate: {
+                        path: 'author',
+                        model: 'User',
+                        select: 'name image'
+                    }
+                })
+        } catch (error: any) {
+            return error.code;
+        }
+    }
+    async unsavePost(post_id: string, user_id: string) {
+        try {
+            return await PostModel.updateOne(
+                { _id: post_id },
+                { $pull: { likes: user_id } }
+            );
+        } catch (error: any) {
+            return error.code;
+        }
+    }
     async getUserHistory(user_id: string) {
         try {
             return await UserHistoryModel.find({ user: user_id });
