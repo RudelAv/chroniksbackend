@@ -16,9 +16,10 @@ export class PostRepositoryImplementation implements PostRepository {
                     populate: {
                         path: 'author',
                         model: 'User',
-                        select: 'name image'
+                        select: '-password -__v -updatedAt'
                     }
                 })
+                .select('-password -__v -updatedAt');
         } catch (error: any) {
             return error.code;
         }

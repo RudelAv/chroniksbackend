@@ -142,6 +142,7 @@ export default function CommunityRouter(
      */
     router.get('/:community', authenticateToken, validate(GetCommunitySchema), async (req, res) => {
         const {community} = req.params;
+        console.log(community);
         const result = await getCommunityUseCase.getCommunityById(community);
         return parseError(result, res);
     });

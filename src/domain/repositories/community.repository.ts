@@ -33,15 +33,20 @@ export class CommunityRepositoryImplementation implements CommunityRepository {
 
     async getCommunityById(communityId: string) {
         try {
-            return await CommunityModel.findById(communityId).populate('creator', 'name image');
+            return await CommunityModel.findById(communityId)
+                .populate('creator', 'name image')
+                .populate('admins', 'name image')
+                .populate('members', 'name image');
         } catch (error: any) {
             return error.code;
         }
     }   
     async getCommunities() {
         try {
-            return await CommunityModel.find({})
-                .populate('creator', 'name image');
+            return await CommunityModel.find({ deleted: false })
+                .populate('creator', 'name image')
+                .populate('admins', 'name image')
+                .populate('members', 'name image');
         } catch (error: any) {
             return error.code;
         }
