@@ -1,9 +1,18 @@
 import { CommunityRepository } from "../interfaces/repositories/community-repository";
-import { Community } from "../entities/Community";
+import { Community, CommunityEvent } from "../entities/Community";
 import { CommunityModel } from "../../../mongoose/models/Communities";
+import { Post } from "../entities/Post";
+import { PostModel } from "../../../mongoose/models/Post";
 
 export class CommunityRepositoryImplementation implements CommunityRepository {
-    
+    async createPost(communityId: string, post: Post) {
+        try {
+            const newPost = await PostModel.create(post);
+            return await CommunityModel.findByIdAndUpdate(communityId, { $push: { posts: newPost._id } });
+        } catch (error : any) {
+            return error.code;
+        }
+    }
     async createCommunity(community: Community, creator: String) {
         console.log("dans le repository",community, creator);
         try {

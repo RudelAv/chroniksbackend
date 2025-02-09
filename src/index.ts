@@ -39,6 +39,9 @@ import { CreateCommunityUseCaseImplementation } from './domain/use-cases/communi
 import { JoinCommunityUseCaseImplementation } from './domain/use-cases/community/join-community';
 import { LeaveCommunityUseCaseImplementation } from './domain/use-cases/community/leave-community';
 import { GetCommunityUseCaseImplementation } from './domain/use-cases/community/get-commmunity';
+import { CreateEventUseCaseImplementation } from './domain/use-cases/event/create-event';
+import { EventRepositoryImplementation } from './domain/repositories/event.repository';
+import { RegisterUnregisterEventUseCaseImplementation } from './domain/use-cases/event/register-unregister-event';
 
 require('dotenv').config();
 
@@ -96,7 +99,9 @@ require('dotenv').config();
         new CreateCommunityUseCaseImplementation(new CommunityRepositoryImplementation()),
         new JoinCommunityUseCaseImplementation(new CommunityRepositoryImplementation()),
         new LeaveCommunityUseCaseImplementation(new CommunityRepositoryImplementation()),
-        new GetCommunityUseCaseImplementation(new CommunityRepositoryImplementation())
+        new GetCommunityUseCaseImplementation(new CommunityRepositoryImplementation()),
+        new CreateEventUseCaseImplementation(new EventRepositoryImplementation()),
+        new RegisterUnregisterEventUseCaseImplementation(new EventRepositoryImplementation())
     );
 
     const TokenMiddleware = TokenRouter();
