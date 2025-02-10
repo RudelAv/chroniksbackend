@@ -12,6 +12,8 @@ import fs from 'fs';
 import { GetCommunityUseCase } from '../../domain/interfaces/uses-cases/community/get-community';
 import { CreateEventUseCase } from '../../domain/interfaces/uses-cases/event/create-event';
 import { RegisterUnregisterEventUseCase } from '../../domain/interfaces/uses-cases/event/register-unregister-event';
+import { CreatePostUseCase } from '../../domain/interfaces/uses-cases/community/create-post';
+import { CreatePostSchema } from '../../domain/schema/post-schema';
 
 
 export default function CommunityRouter(
@@ -21,6 +23,7 @@ export default function CommunityRouter(
     getCommunityUseCase: GetCommunityUseCase,
     createEventUseCase: CreateEventUseCase,
     registerUnregisterEventUseCase: RegisterUnregisterEventUseCase,
+    createPostUseCase: CreatePostUseCase
 ) {
     const router = express.Router();
     const upload = multer({ dest: 'uploads/' });
@@ -70,6 +73,64 @@ export default function CommunityRouter(
         const community = { ...req.body, image: imageUrl };
         console.log("dans le router", community)
         const result = await createCommunityUseCase.createCommunity(community, req.body.userConnect.id);
+        return parseError(result, res);
+    });
+
+    /**
+     * @swagger
+     * /api/v1/post:
+     *   post:
+     *     summary: Create a post
+     *     description: Create a post
+     *     tags: ["Posts"]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       $ref: '#/components/requestBodies/CreatePostSchema'
+     *     responses:
+     *       200:
+     *         description: Post created successfully
+     *       401:
+     *         description: Unauthorized
+     *       500:
+     *         description: Internal server error
+     *       400:
+     *         description: Bad request
+     */
+    router.post('/:communityId/post', upload.fields([{ name: 'imagePreview', maxCount: 1 }]), authenticateToken, validate(CreatePostSchema), async (req, res) => {
+        const user_id = req.body.userConnect.id;
+        const communityId = req.params.communityId;
+        
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const imagePreviewFile = files?.imagePreview || [];
+        
+        let imageUrl = null;
+        if (imagePreviewFile.length > 0) {
+            try {
+                const timestamp = Math.round(Date.now() / 1000) + 3600;
+                const result = await cloudinary.uploader.upload(imagePreviewFile[0].path, {
+                    resource_type: 'image',
+                    folder: 'chroniks/posts/previews',
+                    timestamp: timestamp
+                });
+                fs.unlinkSync(imagePreviewFile[0].path);
+                imageUrl = result.secure_url;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        const post = {
+            title: req.body.title,
+            content: req.body.content,
+            author: user_id,
+            likes: [],
+            comments: [],
+            tags: req.body.tags,
+            imagePreview: imageUrl
+        };
+        
+        const result = await createPostUseCase.createPost(communityId, post as any);
         return parseError(result, res);
     });
 
@@ -194,6 +255,37 @@ export default function CommunityRouter(
         return parseError(result, res);
     })
 
+
+    /**
+     * @swagger
+     * /api/v1/community/{community}/posts:
+     *   get:
+     *     summary: Get posts by community
+     *     description: Get posts by community
+     *     tags: ["Community"]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - name: community
+     *         in: path
+     *         description: The id of the community
+     *         required: true
+     *         type: string
+     *     responses:
+     *       200:
+     *         description: Posts retrieved successfully
+     *       401:
+     *         description: Unauthorized
+     *       500:
+     *         description: Internal server error
+     */
+    router.get('/:community/posts', authenticateToken, async (req, res) => {
+        const {community} = req.params;
+        console.log(community);
+        const result = await getCommunityUseCase.getPostByCommunity(community);
+        return parseError(result, res);
+    });
+
     /**
      * @swagger
      * /api/v1/community/{community}/event/{event}/unregister:
@@ -256,6 +348,7 @@ export default function CommunityRouter(
         const result = await getCommunityUseCase.getCommunityById(community);
         return parseError(result, res);
     });
+
 
     /**
      * @swagger

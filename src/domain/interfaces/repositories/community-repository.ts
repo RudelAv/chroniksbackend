@@ -9,4 +9,7 @@ export interface CommunityRepository {
     updateCommunity(communityId: string, community: Community): any;
     deleteCommunity(communityId: string): any;
     createPost(communityId: string, post: Post): any;
+    getPostByCommunity(communityId: string): any;
+    makeAdmin(communityId: string, userId: String,user: String): any;
+    removeAdmin(communityId: string, userId: String,user: String): any;
 }

@@ -195,20 +195,20 @@ export class PostRepositoryImplementation implements PostRepository {
     }
     async getPost(post_id: string, user_id: string) {
         try {
-            const post = await PostModel.findById(post_id);
+            const post = await PostModel.findById(post_id).populate('author', 'name image');
             if (!post) {
                 return 'P2005';
             }
 
-            const user = await UserModel.findById(user_id);
-            if (!user) {
-                return 'P2005';
-            }
+            // const user = await UserModel.findById(user_id);
+            // if (!user) {
+            //     return 'P2005';
+            // }
 
-            await UserHistoryModel.create({
-                user: user_id,
-                viewedPosts: [post_id]
-            });
+            // await UserHistoryModel.create({
+            //     user: user_id,
+            //     viewedPosts: [post_id]
+            // });
 
             return post;
         } catch (error:any) {

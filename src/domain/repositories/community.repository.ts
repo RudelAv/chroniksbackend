@@ -5,6 +5,21 @@ import { Post } from "../entities/Post";
 import { PostModel } from "../../../mongoose/models/Post";
 
 export class CommunityRepositoryImplementation implements CommunityRepository {
+
+    async getPostByCommunity(communityId: string) {
+        try {
+            return await CommunityModel.findById(communityId).populate({
+                path: 'posts',
+                populate: {
+                    path: 'author',
+                    model: 'User',
+                    select: 'name image'
+                }
+            });
+        } catch (error: any) {
+            return error.code;
+        }
+    }
     async createPost(communityId: string, post: Post) {
         try {
             const newPost = await PostModel.create(post);
@@ -73,5 +88,30 @@ export class CommunityRepositoryImplementation implements CommunityRepository {
         } catch (error: any) {
             return error.code;
         }
+    }
+
+    async makeAdmin(communityId: string, user: String, userId: String) {
+        const community = await CommunityModel.findById(communityId);
+        if (!community) {
+            return 'P2005';
+        }
+
+        if (!community.admins.some(admin => admin.toString() === userId.toString())) {
+            return 'P2007';
+        }
+
+        return await CommunityModel.findByIdAndUpdate(communityId, { $addToSet: { admins: user } });
+    }
+    async removeAdmin(communityId: string, userId: String,user: String) {
+        const community = await CommunityModel.findById(communityId);
+        if (!community) {
+            return 'P2005';
+        }
+
+        if (!community.admins.some(admin => admin.toString() === userId.toString())) {
+            return 'P2007';
+        }
+
+        return await CommunityModel.findByIdAndUpdate(communityId, { $pull: { admins: user } });
     }
 }
