@@ -43,6 +43,8 @@ import { CreateEventUseCaseImplementation } from './domain/use-cases/event/creat
 import { EventRepositoryImplementation } from './domain/repositories/event.repository';
 import { RegisterUnregisterEventUseCaseImplementation } from './domain/use-cases/event/register-unregister-event';
 import { CreatePostUseCaseImplementation } from './domain/use-cases/community/create-post';
+import { HasAdminAccessUseCaseImplementation } from './domain/use-cases/community/has-admin-access';
+import { PromoteAdmin } from './domain/use-cases/community/promote-admin';
 
 require('dotenv').config();
 
@@ -103,7 +105,9 @@ require('dotenv').config();
         new GetCommunityUseCaseImplementation(new CommunityRepositoryImplementation()),
         new CreateEventUseCaseImplementation(new EventRepositoryImplementation()),
         new RegisterUnregisterEventUseCaseImplementation(new EventRepositoryImplementation()),
-        new CreatePostUseCaseImplementation(new CommunityRepositoryImplementation())
+        new CreatePostUseCaseImplementation(new CommunityRepositoryImplementation()),
+        new HasAdminAccessUseCaseImplementation(new CommunityRepositoryImplementation()),
+        new PromoteAdmin(new CommunityRepositoryImplementation())
     );
 
     const TokenMiddleware = TokenRouter();

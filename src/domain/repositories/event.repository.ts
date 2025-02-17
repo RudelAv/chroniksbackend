@@ -34,8 +34,14 @@ export class EventRepositoryImplementation implements EventRepository {
             return error.code;
         }
     }
-    async createEvent(communityId: string, event: CommunityEvent) {
+    async createEvent(communityId: string, event: CommunityEvent, userId: string) {
         try {
+            const community = await CommunityModel.findById(communityId);
+            
+            if (!community?.admins.some(admin => admin.toString() === userId.toString())) {
+                return 'P2025';
+            }
+
             return await CommunityModel.findByIdAndUpdate(
                 communityId,
                 { $push: { events: event } },

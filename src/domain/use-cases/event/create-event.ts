@@ -5,8 +5,8 @@ import { EventRepository } from "../../interfaces/repositories/event-repository"
 export class CreateEventUseCaseImplementation implements CreateEventUseCase {
 
     constructor(private readonly eventRepository: EventRepository) {}
-    async createEvent(communityId: string, event: CommunityEvent) {
-        return this.eventRepository.createEvent(communityId, event);
+    async createEvent(communityId: string, event: CommunityEvent, userId: string) {
+        return this.eventRepository.createEvent(communityId, event, userId);
     }
     
 }

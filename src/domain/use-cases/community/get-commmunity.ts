@@ -14,4 +14,8 @@ export class GetCommunityUseCaseImplementation implements GetCommunityUseCase {
     async getCommunities() {
         return await this.communityRepository.getCommunities();
     }
+
+    async getCommunityMembers(communityId: string, limit: number, skip: number) {
+        return await this.communityRepository.getCommunityMembers(communityId, limit, skip);
+    }
 }

@@ -120,6 +120,23 @@ export async function parseError(result: Object, res: Response) {
         code: "403",
         message: "Forbidden: You cannot update this post.",
       });
+
+    case "P2025":
+      /**
+       * @swagger
+       * components:
+       *   responses:
+       *     Forbidden:
+       *       description: Forbidden
+       *       content:
+       *         application/json:
+       *           schema:
+       *             $ref: '#/components/schemas/DefaultError'
+       */
+      return res.status(403).json({
+        code: "403",
+        message: "Only admin can create events",
+      });
     case "P2006":
       /**
        * @swagger

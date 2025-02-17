@@ -5,7 +5,6 @@ import { Post } from "../entities/Post";
 import { PostModel } from "../../../mongoose/models/Post";
 
 export class CommunityRepositoryImplementation implements CommunityRepository {
-
     async getPostByCommunity(communityId: string) {
         try {
             return await CommunityModel.findById(communityId).populate({
@@ -23,7 +22,8 @@ export class CommunityRepositoryImplementation implements CommunityRepository {
     async createPost(communityId: string, post: Post) {
         try {
             const newPost = await PostModel.create(post);
-            return await CommunityModel.findByIdAndUpdate(communityId, { $push: { posts: newPost._id } });
+            const community = await CommunityModel.findByIdAndUpdate(communityId, { $push: { posts: newPost._id } });
+            return newPost;
         } catch (error : any) {
             return error.code;
         }
@@ -113,5 +113,36 @@ export class CommunityRepositoryImplementation implements CommunityRepository {
         }
 
         return await CommunityModel.findByIdAndUpdate(communityId, { $pull: { admins: user } });
+    }
+
+    async hasAdminAccess(communityId: string, userId: String) {
+        const community = await CommunityModel.findById(communityId);
+        if (!community) {
+            return 'P2005';
+        }
+
+        if (!community.admins.some(admin => admin.toString() === userId.toString())) {
+            return 'P2007';
+        }
+
+        return true;
+    }
+
+    async getCommunityMembers(communityId: string, limit: number, skip: number) {
+        const community = await CommunityModel.findById(communityId).populate({
+            path: 'members',
+            select: 'name image bio',
+            options: {
+                skip,
+                limit,
+            },
+        });
+        if (!community) {
+            return 'P2005';
+        }
+        return {
+            members: community.members,
+            total: community.members.length
+        };
     }
 }

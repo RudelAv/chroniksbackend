@@ -12,4 +12,6 @@ export interface CommunityRepository {
     getPostByCommunity(communityId: string): any;
     makeAdmin(communityId: string, userId: String,user: String): any;
     removeAdmin(communityId: string, userId: String,user: String): any;
+    hasAdminAccess(communityId: string, userId: String): any;
+    getCommunityMembers(communityId: string, limit: number, skip: number): any;
 }
