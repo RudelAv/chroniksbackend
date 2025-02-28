@@ -45,6 +45,7 @@ import { RegisterUnregisterEventUseCaseImplementation } from './domain/use-cases
 import { CreatePostUseCaseImplementation } from './domain/use-cases/community/create-post';
 import { HasAdminAccessUseCaseImplementation } from './domain/use-cases/community/has-admin-access';
 import { PromoteAdmin } from './domain/use-cases/community/promote-admin';
+import { SignUpOAuth } from './domain/use-cases/signup/signUpOAuth';
 
 require('dotenv').config();
 
@@ -63,7 +64,8 @@ require('dotenv').config();
     });
 
     const signUpMiddleware = SignupRouter(
-        new SignUpEmail(new SignUpRepositoryImplementation(new JWToken()))
+        new SignUpEmail(new SignUpRepositoryImplementation(new JWToken())),
+        new SignUpOAuth(new SignUpRepositoryImplementation(new JWToken()))
     );
     const signInMiddleware = SigninRouter(
         new SignInEmail(new SignInRepositoryImplementation(new JWToken()))

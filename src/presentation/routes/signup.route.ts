@@ -4,9 +4,12 @@ import { SignUpEmailUseCase } from '../../domain/interfaces/uses-cases/signup/si
 import { validate } from '../../domain/middleware/validate';
 import { signupSchema } from '../../domain/schema/signup-schema';
 import { parseError } from '../../domain/utils/parse_error';
+import { SignUpOAuthUseCase } from '../../domain/interfaces/uses-cases/signup/signupOAuth';
+import { verifyGoogleToken } from '../../domain/utils/googleOAuth';
 
 export default function SignupRouter(
     signUpEmailUseCase: SignUpEmailUseCase,
+    signUpOAuthUseCase: SignUpOAuthUseCase
 )
 
 {
@@ -32,6 +35,48 @@ export default function SignupRouter(
     router.post('/email', validate(signupSchema), async (req: Request, res: Response) => {
         const result = await signUpEmailUseCase.signUpEmail(req.body);
         return parseError(result, res);
+    });
+
+
+    /**
+     * @swagger
+     * /api/v1/signup/oauth:
+     *   post:
+     *     summary: Sign up with OAuth (Google)
+     *     description: Sign up with OAuth (Google)
+     *     tags: ["Signup"]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name:
+     *                 type: string
+     *               email:
+     *                 type: string
+     *               image:
+     *                 type: string
+     *     responses:
+     *       200:
+     *         description: Sign up successful
+     *       401:
+     *         description: Unauthorized
+     *       500:
+     *         description: Internal server error
+     */
+    router.post('/oauth', async (req: Request, res: Response) => {
+        const { token } = req.body;
+
+        try {
+            const user = await verifyGoogleToken(token);
+            const result = await signUpOAuthUseCase.signUpOAuth(user);
+            return parseError(result, res);
+        } catch (error) {
+            return res.status(500).json({ code: "500", message: error });
+        }
+        
     });
 
     return router;
