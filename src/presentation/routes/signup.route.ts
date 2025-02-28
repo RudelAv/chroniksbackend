@@ -2,7 +2,7 @@ import express from 'express';
 import { Request, Response } from "express";
 import { SignUpEmailUseCase } from '../../domain/interfaces/uses-cases/signup/signupEmail';
 import { validate } from '../../domain/middleware/validate';
-import { signupSchema } from '../../domain/schema/signup-schema';
+import { signupOAuthSchema, signupSchema } from '../../domain/schema/signup-schema';
 import { parseError } from '../../domain/utils/parse_error';
 import { SignUpOAuthUseCase } from '../../domain/interfaces/uses-cases/signup/signupOAuth';
 import { verifyGoogleToken } from '../../domain/utils/googleOAuth';
@@ -52,11 +52,7 @@ export default function SignupRouter(
      *           schema:
      *             type: object
      *             properties:
-     *               name:
-     *                 type: string
-     *               email:
-     *                 type: string
-     *               image:
+     *               token:
      *                 type: string
      *     responses:
      *       200:
@@ -66,9 +62,9 @@ export default function SignupRouter(
      *       500:
      *         description: Internal server error
      */
-    router.post('/oauth', async (req: Request, res: Response) => {
+    router.post('/oauth', validate(signupOAuthSchema),async (req: Request, res: Response) => {
         const { token } = req.body;
-
+        console.log(token);
         try {
             const user = await verifyGoogleToken(token);
             const result = await signUpOAuthUseCase.signUpOAuth(user);

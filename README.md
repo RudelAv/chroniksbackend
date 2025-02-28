@@ -4,11 +4,13 @@ Une API REST pour le back-end d'un blog tech (DevBlog) construite avec Node.js, 
 
 ## Fonctionnalités
 
-- Authentification (inscription/connexion) avec JWT
+- Authentification (inscription/connexion) avec JWT et OAuth
 - Gestion des profils utilisateurs
 - Publication et gestion de posts
 - Likes et commentaires sur les posts
 - Sauvegarde de posts
+- Gestion des images avec Cloudinary
+- Gestion des communautés
 - Gestion des tokens (rafraîchissement/révocation)
 
 ## Technologies utilisées
@@ -40,6 +42,7 @@ CLOUDINARY_CLOUD_NAME=VOTRE_CLOUDINARY_CLOUD_NAME
 CLOUDINARY_API_KEY=VOTRE_CLOUDINARY_API_KEY
 CLOUDINARY_API_SECRET=VOTRE_CLOUDINARY_API_SECRET
 PORT=VOTRE_PORT
+GOOGLE_CLIENT_ID=VOTRE_GOOGLE_CLIENT_ID
 
 ```
 

@@ -37,4 +37,25 @@ export const signupSchema = object({
     }),
 });
 
+
 export type SignUpSchema = TypeOf<typeof signupSchema>["body"];
+
+/**
+ * @openapi
+ * components:
+ *   requestBodies:
+ *     SignupOAuthSchema:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ */
+export const signupOAuthSchema = object({
+    body: object({
+        token: z.string(),
+    })
+});
